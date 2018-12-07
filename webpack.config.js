@@ -6,10 +6,16 @@ const package = require('./package');
 const config = {
   devtool: 'source-map',
   entry: {
-    app: path.resolve(__dirname, './index.js'),
+    app: path.resolve(__dirname, 'src', 'index.js'),
   },
   module: {
     rules: [
+      {
+        test: /\.css$/,
+        loader: `style-loader!css-loader?${
+          'modules=true&localIdentName=[name]__[local]___[hash:base64:5]'
+        }`
+      },
       {
         test: /\.jsx?$/,
         exclude: /node\_modules/,
@@ -28,7 +34,7 @@ const config = {
     }),
   ],
   resolve: {
-    extensions: ['*', '.js', '.jsx'],
+    extensions: ['*', '.css', '.js', '.jsx'],
   },
 };
 

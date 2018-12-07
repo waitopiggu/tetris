@@ -8,6 +8,7 @@ export const tetrominos = [
       [0, 0, 0, 0],
     ],
     size: 4,
+    spawn: [0, 3],
   },
   {
     name: 'J',
@@ -17,6 +18,7 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
+    spawn: [0, 3],
   },
   {
     name: 'L',
@@ -26,6 +28,7 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
+    spawn: [0, 3],
   },
   {
     name: 'O',
@@ -34,6 +37,7 @@ export const tetrominos = [
       [1, 1],
     ],
     size: 2,
+    spawn: [0, 4],
   },
   {
     name: 'S',
@@ -43,6 +47,7 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
+    spawn: [0, 3],
   },
   {
     name: 'T',
@@ -52,6 +57,7 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
+    spawn: [0, 3],
   },
   {
     name: 'Z',
@@ -61,13 +67,23 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
+    spawn: [0, 3],
   },
 ];
 
 /**
  * Rotate Tetromino
+ */
+export function next() {
+  const { length } = tetrominos;
+  const index = Math.floor(Math.random() * length);
+  return tetrominos[index];
+}
+
+/**
+ * Rotate Tetromino
  * @param {any} tetromino
- * @param {boolean} counterClockwise
+ * @param {?boolean} counterClockwise
  */
 export function rotate(tetromino, counterClockwise = false) {
   const { piece, size } = tetromino;
@@ -85,5 +101,6 @@ export function rotate(tetromino, counterClockwise = false) {
 
 export default {
   tetrominos,
+  next,
   rotate,
 };

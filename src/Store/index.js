@@ -1,11 +1,13 @@
 import React from 'react';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-import { reducer as keymap } from './keymap';
+import field from './field';
+import keymap from './keymap';
 
 export const store = createStore(
   combineReducers({
-    keymap,
+    field: field.reducer,
+    keymap: keymap.reducer,
   }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
@@ -15,3 +17,8 @@ export default ({ children }) => (
     {children}
   </Provider>
 );
+
+export {
+  field,
+  keymap,
+};

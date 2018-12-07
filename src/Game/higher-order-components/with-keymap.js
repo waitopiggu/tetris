@@ -1,26 +1,33 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { actionTypes } from '../Store/keymap';
+import { keymap } from '../../Store';
 
-const KEY_LEFT = 37;
-const KEY_RIGHT = 39;
+const { KEY_CODE } = keymap;
 
 type Props = {
   keyDown: Function,
   keyUp: Function,
 };
 
+/**
+ * With Keymap
+ * @param {React.Component} WrappedComponent 
+ */
 function withKeymap(WrappedComponent) {
   class Wrapper extends React.PureComponent<Props> {
-
+    /**
+     * On Key Down
+     * @param {Event} event
+     */
     onKeyDown = (event) => {
+      const { keyDown } = this.props;
       switch (event.keyCode) {
-        case KEY_LEFT: {
-          this.props.keyDown('left');
+        case KEY_CODE.LEFT: {
+          keyDown('left');
           break;
         }
-        case KEY_RIGHT: {
-          this.props.keyDown('right');
+        case KEY_CODE.RIGHT: {
+          keyDown('right');
           break;
         }
         default: {
@@ -29,14 +36,19 @@ function withKeymap(WrappedComponent) {
       }
     };
 
+    /**
+     * On Key Up
+     * @param {Event} event
+     */
     onKeyUp = (event) => {
+      const { keyUp } = this.props;
       switch (event.keyCode) {
         case KEY_LEFT: {
-          this.props.keyUp('left');
+          keyUp('left');
           break;
         }
         case KEY_RIGHT: {
-          this.props.keyUp('right');
+          keyUp('right');
           break;
         }
         default: {
@@ -45,25 +57,42 @@ function withKeymap(WrappedComponent) {
       }
     };
 
+    /**
+     * Component Did Mount
+     */
     componentDidMount() {
       document.addEventListener('keydown',this.onKeyDown);
       document.addEventListener('keyup', this.onKeyUp);
     }
 
+    /**
+     * Component Did Mount
+     */
     componentWillUnmount() {
       document.removeEventListener('keydown', this.onKeyDown);
       document.removeEventListener('keyup', this.onKeyUp);
     }
 
+    /**
+     * Render
+     */
     render() {
       return <WrappedComponent {...this.props} />;
     }
   }
 
+  /**
+   * Map State to Props
+   * @param {any} state 
+   */
   const mapStateToProps = state => ({
     keymap: state.keymap,
   });
   
+  /**
+   * Map Dispatch to Props
+   * @param {Function} dispatch
+   */
   const mapDispatchToProps = dispatch => ({
     keyDown: key => dispatch({
       type: actionTypes.KEY_DOWN,
