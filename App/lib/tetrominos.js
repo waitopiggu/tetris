@@ -21,7 +21,10 @@ export const tetrominos = [
       [0, 0, 0, 0],
     ],
     size: 4,
-    spawn: [0, 3],
+    spawn: {
+      x: 3,
+      y: 0,
+    },
   },
   {
     name: 'J',
@@ -31,7 +34,10 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
-    spawn: [0, 3],
+    spawn: {
+      x: 3,
+      y: 0,
+    },
   },
   {
     name: 'L',
@@ -41,7 +47,10 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
-    spawn: [0, 3],
+    spawn: {
+      x: 3,
+      y: 0,
+    },
   },
   {
     name: 'O',
@@ -50,7 +59,10 @@ export const tetrominos = [
       [4, 4],
     ],
     size: 2,
-    spawn: [0, 4],
+    spawn: {
+      x: 4,
+      y: 0,
+    },
   },
   {
     name: 'S',
@@ -60,7 +72,10 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
-    spawn: [0, 3],
+    spawn: {
+      x: 3,
+      y: 0,
+    },
   },
   {
     name: 'T',
@@ -70,7 +85,10 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
-    spawn: [0, 3],
+    spawn: {
+      x: 3,
+      y: 0,
+    },
   },
   {
     name: 'Z',
@@ -80,7 +98,10 @@ export const tetrominos = [
       [0, 0, 0],
     ],
     size: 3,
-    spawn: [0, 3],
+    spawn: {
+      x: 3,
+      y: 0,
+    },
   },
 ];
 
@@ -100,11 +121,11 @@ export function getRandom() {
  */
 export function rotate(tetromino, counterClockwise = false) {
   const { piece, size } = tetromino;
-  const rotated = new Array(size);
+  const rotated = cloneDeep(tetromino);
   for (let i = 0; i < size; i++) {
-    rotated[i] = new Array(size);
+    rotated.piece[i] = new Array(size);
     for (let j = 0; j < size; j++) {
-      rotated[i][j] = counterClockwise
+      rotated.piece[i][j] = counterClockwise
         ? piece[j][size - i - 1]
         : piece[size - j - 1][i];
     }

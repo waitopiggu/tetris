@@ -1,14 +1,12 @@
 import React from 'react';
+import { clone } from 'lodash';
 import { Field } from './components';
-import { tetrominos } from './lib';
-
-const INITIAL_SPEED = 1000;
-const MATRIX_COLS = 10;
-const MATRIX_ROWS = 20;
+import { env, tetrominos } from './lib';
 
 type State = {
+  input: any,
   placed: Array<any>,
-  position: Array<number>,
+  position: any,
   speed: number,
   tetromino: any,
 };
@@ -19,24 +17,20 @@ type State = {
  */
 export default class App extends React.Component<*, State> {
   /**
-   * Default State
-   */
-  state = {
-    placed: [],
-    position: [],
-    speed: 0,
-    tetromino: {},
-  };
-
-  /**
-   * Input
-   */
-  input = {};
-
-  /**
    * Last Update
    */
   lastUpdate = 0;
+
+  /**
+   * Default State
+   */
+  state = {
+    input: {},
+    placed: [],
+    position: {},
+    speed: 0,
+    tetromino: {},
+  };
 
   /**
    * Component Will Mount
@@ -70,13 +64,19 @@ export default class App extends React.Component<*, State> {
   onKeyUp: Function;
 
   /**
+   * Collide
+   */
+  collide = () => {
+  };
+
+  /**
    * Get Matrix
    */
   getMatrix = () => {
     const { placed, position, tetromino } = this.state;
     const matrix = placed.map(row => row.map(col => col));
     const { size } = tetromino || 0;
-    const [y, x] = position;
+    const { x, y } = position;
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
         matrix[i + y][j + x] = tetromino.piece[i][j];
@@ -89,53 +89,64 @@ export default class App extends React.Component<*, State> {
    * Handle Input
    * @param {boolean} value
    */
-  handleInput = value => (event) => {
+  handleInput = value => async (event) => {
+    const { input } = this.state;
     switch (event.key) {
       case 'ArrowLeft': {
-        this.input.left = value;
+        input.left = value;
         break;
       }
       case 'ArrowRight': {
-        this.input.right = value;
+        input.right = value;
         break;
       }
       default: {
         break;
       }
     }
+    await this.setState({ input });
   };
 
   /**
    * Initialize
    */
-  initialize = () => {
-    const placed = Array(MATRIX_ROWS).fill(Array(MATRIX_COLS).fill(0));
+  initialize = async () => {
+    const { cols, rows } = env.field;
+    const placed = Array(rows).fill(Array(cols).fill(0));
     const tetromino = tetrominos.getRandom();
-    this.setState({
+    await this.setState({
       placed,
-      position: tetromino.spawn.slice(),
-      speed: INITIAL_SPEED,
+      position: clone(tetromino.spawn),
+      speed: env.initialSpeed,
       tetromino,
     });
     window.requestAnimationFrame(this.update);
   };
 
   /**
+   * Move
+   */
+  move = async () => {
+    const { input, position } = this.state;
+    if (input.left) {
+      position.x -= 1;
+    } else if (input.right) {
+      position.x += 1;
+    }
+    await this.setState({ position });
+  };
+
+  /**
    * Update
    * @param {number} timestamp
    */
-  update = (timestamp) => {
+  update = async (timestamp) => {
     const { speed } = this.state;
+    await this.move();
     if (timestamp - this.lastUpdate > speed) {
       const { position } = this.state;
-      let [y, x] = position;
-      if (this.input.left) {
-        x -= 1;
-      }
-      if (this.input.right) {
-        x += 1;
-      }
-      this.setState({ position: [y + 1, x] });
+      position.y += 1;
+      await this.setState({ position });
       this.lastUpdate = timestamp;
     }
     window.requestAnimationFrame(this.update);
