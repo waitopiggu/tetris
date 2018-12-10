@@ -6,7 +6,7 @@ const package = require('./package');
 const config = {
   devtool: 'source-map',
   entry: {
-    app: path.resolve(__dirname, 'src', 'index.js'),
+    app: path.resolve(__dirname, 'index.js'),
   },
   module: {
     rules: [

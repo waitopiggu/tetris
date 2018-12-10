@@ -1,6 +1,18 @@
+import { cloneDeep } from 'lodash';
+
+export const colors = [
+  'dimgray',
+  'cyan',
+  'dodgerblue',
+  'orange',
+  'yellow',
+  'lightgreen',
+  'violet',
+  'red',
+];
+
 export const tetrominos = [
   {
-    color: 'cyan',
     name: 'I',
     piece: [
       [0, 0, 0, 0],
@@ -12,65 +24,59 @@ export const tetrominos = [
     spawn: [0, 3],
   },
   {
-    color: 'blue',
     name: 'J',
     piece: [
-      [1, 0, 0],
-      [1, 1, 1],
+      [2, 0, 0],
+      [2, 2, 2],
       [0, 0, 0],
     ],
     size: 3,
     spawn: [0, 3],
   },
   {
-    color: 'orange',
     name: 'L',
     piece: [
-      [0, 0, 1],
-      [1, 1, 1],
+      [0, 0, 3],
+      [3, 3, 3],
       [0, 0, 0],
     ],
     size: 3,
     spawn: [0, 3],
   },
   {
-    color: 'yellow',
     name: 'O',
     piece: [
-      [1, 1],
-      [1, 1],
+      [4, 4],
+      [4, 4],
     ],
     size: 2,
     spawn: [0, 4],
   },
   {
-    color: 'green',
     name: 'S',
     piece: [
-      [0, 1, 1],
-      [1, 1, 0],
+      [0, 5, 5],
+      [5, 5, 0],
       [0, 0, 0],
     ],
     size: 3,
     spawn: [0, 3],
   },
   {
-    color: 'purple',
     name: 'T',
     piece: [
-      [0, 1, 0],
-      [1, 1, 1],
+      [0, 6, 0],
+      [6, 6, 6],
       [0, 0, 0],
     ],
     size: 3,
     spawn: [0, 3],
   },
   {
-    color: 'red',
     name: 'Z',
     piece: [
-      [1, 1, 0],
-      [0, 1, 1],
+      [7, 7, 0],
+      [0, 7, 7],
       [0, 0, 0],
     ],
     size: 3,
@@ -84,7 +90,7 @@ export const tetrominos = [
 export function getRandom() {
   const { length } = tetrominos;
   const index = Math.floor(Math.random() * length);
-  return tetrominos[index];
+  return cloneDeep(tetrominos[index]);
 }
 
 /**
@@ -107,6 +113,7 @@ export function rotate(tetromino, counterClockwise = false) {
 }
 
 export default {
+  colors,
   getRandom,
   rotate,
   tetrominos,
