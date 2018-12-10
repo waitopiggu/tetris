@@ -2,23 +2,23 @@ import React from 'react';
 import styles from './styles';
 
 type Props = {
-  field: Array<[]>,
+  matrix: Array<[]>,
+  player: any,
 };
 
 /**
  * Field Component
  * @param {Props} props
  */
-export default ({ field }: Props) => (
+export default ({ matrix }: Props) => (
   <table className={styles.table}>
     <tbody>
-      {field.map((row, i) => (
+      {matrix.map((row, i) => (
         <tr key={i}>
           {row.map((col, j) => (
-          <td key={j}>
-            {col ? '[' : '.'}
-            {col ? ']' : '.'}
-          </td>
+            <td key={j}>
+              {col ? '[]' : '..'}
+            </td>
           ))}
         </tr>
       ))}

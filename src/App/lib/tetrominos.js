@@ -1,5 +1,6 @@
 export const tetrominos = [
   {
+    color: 'cyan',
     name: 'I',
     piece: [
       [0, 0, 0, 0],
@@ -11,6 +12,7 @@ export const tetrominos = [
     spawn: [0, 3],
   },
   {
+    color: 'blue',
     name: 'J',
     piece: [
       [1, 0, 0],
@@ -21,6 +23,7 @@ export const tetrominos = [
     spawn: [0, 3],
   },
   {
+    color: 'orange',
     name: 'L',
     piece: [
       [0, 0, 1],
@@ -31,6 +34,7 @@ export const tetrominos = [
     spawn: [0, 3],
   },
   {
+    color: 'yellow',
     name: 'O',
     piece: [
       [1, 1],
@@ -40,6 +44,7 @@ export const tetrominos = [
     spawn: [0, 4],
   },
   {
+    color: 'green',
     name: 'S',
     piece: [
       [0, 1, 1],
@@ -50,6 +55,7 @@ export const tetrominos = [
     spawn: [0, 3],
   },
   {
+    color: 'purple',
     name: 'T',
     piece: [
       [0, 1, 0],
@@ -60,6 +66,7 @@ export const tetrominos = [
     spawn: [0, 3],
   },
   {
+    color: 'red',
     name: 'Z',
     piece: [
       [1, 1, 0],
@@ -72,9 +79,9 @@ export const tetrominos = [
 ];
 
 /**
- * Rotate Tetromino
+ * Get Random Tetromino
  */
-export function next() {
+export function getRandom() {
   const { length } = tetrominos;
   const index = Math.floor(Math.random() * length);
   return tetrominos[index];
@@ -100,7 +107,7 @@ export function rotate(tetromino, counterClockwise = false) {
 }
 
 export default {
-  tetrominos,
-  next,
+  getRandom,
   rotate,
+  tetrominos,
 };

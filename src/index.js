@@ -1,13 +1,9 @@
+import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Store from './Store';
-import Game from './Game';
+import App from './App';
 
 ReactDOM.render(
-  <React.Fragment>
-    <Store>
-      <Game />
-    </Store>
-  </React.Fragment>,
+  <App />,
   document.getElementById('app'),
 );
