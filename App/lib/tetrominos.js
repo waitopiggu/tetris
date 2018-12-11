@@ -106,9 +106,9 @@ export const tetrominos = [
 ];
 
 /**
- * Get Random Tetromino
+ * Random Tetromino
  */
-export function getRandom() {
+export function random() {
   const { length } = tetrominos;
   const index = Math.floor(Math.random() * length);
   return cloneDeep(tetrominos[index]);
@@ -135,7 +135,7 @@ export function rotate(tetromino, counterClockwise = false) {
 
 export default {
   colors,
-  getRandom,
+  random,
   rotate,
   tetrominos,
 };

@@ -6,9 +6,8 @@ import { env, tetrominos } from './lib';
 type State = {
   input: any,
   placed: Array<any>,
-  position: any,
+  player: any,
   speed: number,
-  tetromino: any,
 };
 
 /**
@@ -27,9 +26,11 @@ export default class App extends React.Component<*, State> {
   state = {
     input: {},
     placed: [],
-    position: {},
+    player: {
+      position: {},
+      tetromino: {},
+    },
     speed: 0,
-    tetromino: {},
   };
 
   /**
@@ -73,13 +74,13 @@ export default class App extends React.Component<*, State> {
    * Get Matrix
    */
   getMatrix = () => {
-    const { placed, position, tetromino } = this.state;
+    const { placed, player } = this.state;
     const matrix = placed.map(row => row.map(col => col));
-    const { size } = tetromino || 0;
-    const { x, y } = position;
+    const { size } = player.tetromino || 0;
+    const { x, y } = player.position;
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
-        matrix[i + y][j + x] = tetromino.piece[i][j];
+        matrix[i + y][j + x] = player.tetromino.piece[i][j];
       }
     }
     return matrix;
@@ -113,12 +114,14 @@ export default class App extends React.Component<*, State> {
   initialize = async () => {
     const { cols, rows } = env.field;
     const placed = Array(rows).fill(Array(cols).fill(0));
-    const tetromino = tetrominos.getRandom();
+    const tetromino = tetrominos.random();
     await this.setState({
       placed,
-      position: clone(tetromino.spawn),
+      player: {
+        position: clone(tetromino.spawn),
+        tetromino,
+      },
       speed: env.initialSpeed,
-      tetromino,
     });
     window.requestAnimationFrame(this.update);
   };
@@ -127,13 +130,14 @@ export default class App extends React.Component<*, State> {
    * Move
    */
   move = async () => {
-    const { input, position } = this.state;
+    const { input, player } = this.state;
     if (input.left) {
-      position.x -= 1;
+      player.position.x -= 1;
     } else if (input.right) {
-      position.x += 1;
+      player.position.x += 1;
     }
-    await this.setState({ position });
+    await this.setState({ player });
+    await this.collide();
   };
 
   /**
@@ -144,9 +148,9 @@ export default class App extends React.Component<*, State> {
     const { speed } = this.state;
     await this.move();
     if (timestamp - this.lastUpdate > speed) {
-      const { position } = this.state;
-      position.y += 1;
-      await this.setState({ position });
+      const { player } = this.state;
+      player.position.y += 1;
+      await this.setState({ player });
       this.lastUpdate = timestamp;
     }
     window.requestAnimationFrame(this.update);
