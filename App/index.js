@@ -1,12 +1,14 @@
 import React from 'react';
 import { clone } from 'lodash';
 import { Field } from './components';
-import { env, tetrominos } from './lib';
+import { env, tetrominos, util } from './lib';
 
 type State = {
   input: any,
   placed: Array<any>,
-  player: any,
+  position: any,
+  rotationIndex: number,
+  tetrominoIndex: number,
   speed: number,
 };
 
@@ -26,10 +28,9 @@ export default class App extends React.Component<*, State> {
   state = {
     input: {},
     placed: [],
-    player: {
-      position: {},
-      tetromino: {},
-    },
+    position: {},
+    rotationIndex: -1,
+    tetrominoIndex: -1,
     speed: 0,
   };
 
@@ -41,7 +42,6 @@ export default class App extends React.Component<*, State> {
     document.addEventListener('keydown', this.onKeyDown);
     this.onKeyUp = this.handleInput(false);
     document.addEventListener('keyup', this.onKeyUp);
-    this.initialize();
   }
 
   /**
@@ -74,13 +74,17 @@ export default class App extends React.Component<*, State> {
    * Get Matrix
    */
   getMatrix = () => {
-    const { placed, player } = this.state;
+    const { placed, position, rotationIndex, tetrominoIndex } = this.state;
     const matrix = placed.map(row => row.map(col => col));
-    const { size } = player.tetromino || 0;
-    const { x, y } = player.position;
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
-        matrix[i + y][j + x] = player.tetromino.piece[i][j];
+    if (!matrix.length) {
+      return [];
+    }
+    const tetromino = tetrominos[tetrominoIndex].rotations[rotationIndex];
+    const { length } = tetromino;
+    const { x, y } = position;
+    for (let i = 0; i < length; i++) {
+      for (let j = 0; j < length; j++) {
+        matrix[i + y][j + x] = tetromino[i][j];
       }
     }
     return matrix;
@@ -101,6 +105,10 @@ export default class App extends React.Component<*, State> {
         input.right = value;
         break;
       }
+      case 'ArrowUp': {
+        input.rotation = value;
+        break;
+      }
       default: {
         break;
       }
@@ -114,13 +122,13 @@ export default class App extends React.Component<*, State> {
   initialize = async () => {
     const { cols, rows } = env.field;
     const placed = Array(rows).fill(Array(cols).fill(0));
-    const tetromino = tetrominos.random();
+    const tetrominoIndex = util.randomIndex(tetrominos)
+    const position = clone(tetrominos[tetrominoIndex].spawn);
     await this.setState({
       placed,
-      player: {
-        position: clone(tetromino.spawn),
-        tetromino,
-      },
+      position,
+      rotationIndex: 0,
+      tetrominoIndex,
       speed: env.initialSpeed,
     });
     window.requestAnimationFrame(this.update);
@@ -130,14 +138,6 @@ export default class App extends React.Component<*, State> {
    * Move
    */
   move = async () => {
-    const { input, player } = this.state;
-    if (input.left) {
-      player.position.x -= 1;
-    } else if (input.right) {
-      player.position.x += 1;
-    }
-    await this.setState({ player });
-    await this.collide();
   };
 
   /**
@@ -145,14 +145,6 @@ export default class App extends React.Component<*, State> {
    * @param {number} timestamp
    */
   update = async (timestamp) => {
-    const { speed } = this.state;
-    await this.move();
-    if (timestamp - this.lastUpdate > speed) {
-      const { player } = this.state;
-      player.position.y += 1;
-      await this.setState({ player });
-      this.lastUpdate = timestamp;
-    }
     window.requestAnimationFrame(this.update);
   };
 
@@ -160,6 +152,13 @@ export default class App extends React.Component<*, State> {
    * Render
    */
   render() {
-    return <Field matrix={this.getMatrix()} />;
+    return (
+      <div>
+        <Field matrix={this.getMatrix()} />
+        <button onClick={this.initialize}>
+          {'initialize'}
+        </button>
+      </div>
+    );
   }
 }

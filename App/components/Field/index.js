@@ -1,5 +1,5 @@
 import React from 'react';
-import { colors } from '../../lib/tetrominos';
+import { env } from '../../lib';
 import styles from './styles';
 
 type Props = {
@@ -16,7 +16,7 @@ export default ({ matrix }: Props) => (
       {matrix.map((row, i) => (
         <tr key={i.toString()}>
           {row.map((col, j) => (
-            <td key={j.toString()} style={{ color: colors[col] }}>
+            <td key={j.toString()} style={{ color: env.colors[col] }}>
               {col ? '[]' : '..'}
             </td>
           ))}
