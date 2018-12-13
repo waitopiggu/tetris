@@ -8,6 +8,7 @@ const fieldMatrix = Array(env.field.rows).fill(Array(env.field.cols).fill(0));
 type State = {
   grounded: boolean,
   input: any,
+  inputLock: boolean,
   placed: Array<any>,
   position: any,
   rotation: number,
@@ -22,13 +23,14 @@ type State = {
  */
 export default class App extends React.Component<*, State> {
   /**
-   * Last input
+   * Last Input
    */
+  lastInput: 0;
 
   /**
-   * Last Update
+   * Last Fall
    */
-  lastUpdate = 0;
+  lastFall: 0;
 
   /**
    * Default State
@@ -36,6 +38,7 @@ export default class App extends React.Component<*, State> {
   state = {
     grounded: false,
     input: {},
+    inputLock: false,
     placed: fieldMatrix,
     position: {},
     rotation: 0,
@@ -151,6 +154,7 @@ export default class App extends React.Component<*, State> {
     const { placed } = this.state;
     const { initialSpeed } = env;
     await this.setState({
+      inputLock: false,
       grounded: false,
       placed: placed.map(row => row.map(col => 0)),
       position,
@@ -160,6 +164,8 @@ export default class App extends React.Component<*, State> {
       tetrominoNext,
       speed: initialSpeed,
     });
+    this.lastInput = 0;
+    this.lastFall = 0;
     window.requestAnimationFrame(this.update);
   };
 
@@ -208,7 +214,7 @@ export default class App extends React.Component<*, State> {
       }
     }
     position.col += moveX;
-    await this.setState({ position, rotation });
+    await this.setState({ inputLock: true, position, rotation });
   };
 
   /**
@@ -216,11 +222,17 @@ export default class App extends React.Component<*, State> {
    * @param {number} timestamp
    */
   update = async (timestamp) => {
-    const { running, speed } = this.state;
-    await this.move();
-    if (timestamp - this.lastUpdate > speed) {
+    const { inputLock, running, speed } = this.state;
+    if (!inputLock) {
+      await this.move();
+      this.lastInput = timestamp;
+    }
+    if (timestamp - this.lastInput > speed / env.inputDelayDivisor) {
+      await this.setState({ inputLock: false });
+    }
+    if (timestamp - this.lastFall > speed) {
       await this.fall();
-      this.lastUpdate = timestamp;
+      this.lastFall = timestamp;
     }
     const { grounded } = this.state;
     if (grounded) {
