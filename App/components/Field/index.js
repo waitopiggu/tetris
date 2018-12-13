@@ -2,6 +2,8 @@ import React from 'react';
 import { env } from '../../lib';
 import styles from './styles';
 
+const { colors, field } = env;
+
 type Props = {
   matrix: Array<[]>,
 };
@@ -16,8 +18,8 @@ export default ({ matrix }: Props) => (
       {matrix.map((row, i) => (
         <tr key={i.toString()}>
           {row.map((col, j) => (
-            <td key={j.toString()} style={{ color: env.colors[col] }}>
-              {col ? '[]' : '..'}
+            <td key={j.toString()} style={{ color: colors[col] }}>
+              {'[]'}
             </td>
           ))}
         </tr>

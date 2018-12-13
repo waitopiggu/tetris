@@ -1,22 +1,29 @@
 import React from 'react';
-import { clone } from 'lodash';
 import { Field } from './components';
 import { env, tetrominos, util } from './lib';
+import styles from './style';
+
+const fieldMatrix = Array(env.field.rows).fill(Array(env.field.cols).fill(0));
 
 type State = {
   input: any,
   placed: Array<any>,
   position: any,
-  rotationIndex: number,
-  tetrominoIndex: number,
+  rotation: number,
+  running: boolean,
+  tetromino: any,
+  tetrominoNext: any,
   speed: number,
 };
 
 /**
  * App Component
- * @param {Props} props
  */
 export default class App extends React.Component<*, State> {
+  /**
+   * Last input
+   */
+
   /**
    * Last Update
    */
@@ -27,10 +34,11 @@ export default class App extends React.Component<*, State> {
    */
   state = {
     input: {},
-    placed: [],
+    placed: fieldMatrix,
     position: {},
-    rotationIndex: -1,
-    tetrominoIndex: -1,
+    rotation: 0,
+    running: false,
+    tetromino: null,
     speed: 0,
   };
 
@@ -65,26 +73,20 @@ export default class App extends React.Component<*, State> {
   onKeyUp: Function;
 
   /**
-   * Collide
-   */
-  collide = () => {
-  };
-
-  /**
    * Get Matrix
    */
   getMatrix = () => {
-    const { placed, position, rotationIndex, tetrominoIndex } = this.state;
+    const { placed, tetromino } = this.state;
     const matrix = placed.map(row => row.map(col => col));
-    if (!matrix.length) {
-      return [];
-    }
-    const tetromino = tetrominos[tetrominoIndex].rotations[rotationIndex];
-    const { length } = tetromino;
-    const { x, y } = position;
-    for (let i = 0; i < length; i++) {
-      for (let j = 0; j < length; j++) {
-        matrix[i + y][j + x] = tetromino[i][j];
+    if (tetromino) {
+      const { position, rotation } = this.state;
+      const block = tetromino.rotations[rotation];
+      const { col, row } = position;
+      for (let i = 0; i < block.length; i++) {
+        for (let j = 0; j < block[i].length; j++) {
+          if (block[i][j] === 0) continue;
+          matrix[i + row][j + col] = block[i][j];
+        }
       }
     }
     return matrix;
@@ -117,27 +119,71 @@ export default class App extends React.Component<*, State> {
   };
 
   /**
-   * Initialize
+   * Place Block
    */
-  initialize = async () => {
-    const { cols, rows } = env.field;
-    const placed = Array(rows).fill(Array(cols).fill(0));
-    const tetrominoIndex = util.randomIndex(tetrominos)
-    const position = clone(tetrominos[tetrominoIndex].spawn);
+  placeBlock = async () => {
+    const { placed, position, rotation, tetromino, tetrominoNext } = this.state;
+    const block = tetromino.rotations[rotation];
+    for (let i = 0; i < block.length; i++) {
+      for (let j = 0; j < block[i].length; j++) {
+        if (block[i][j] === 0) continue;
+        placed[i + position.row][j + position.col] = block[i][j];
+      }
+    }
     await this.setState({
       placed,
+      position: { ...tetrominoNext.position },
+      rotation: 0,
+      tetromino: tetrominoNext,
+      tetrominoNext: util.randomItem(tetrominos),
+    });
+  };
+
+  /**
+   * Start
+   */
+  start = async () => {
+    const tetromino = util.randomItem(tetrominos);
+    const tetrominoNext = util.randomItem(tetrominos);
+    const position = { ...tetromino.position };
+    const { placed } = this.state;
+    const { initialSpeed } = env;
+    await this.setState({
+      placed: placed.map(row => row.map(col => 0)),
       position,
-      rotationIndex: 0,
-      tetrominoIndex,
-      speed: env.initialSpeed,
+      rotation: 0,
+      running: true,
+      tetromino,
+      tetrominoNext,
+      speed: initialSpeed,
     });
     window.requestAnimationFrame(this.update);
   };
 
   /**
-   * Move
+   * Stop
    */
-  move = async () => {
+  stop = () => this.setState({ running: false });
+
+  /**
+   * Fall
+   */
+  fall = async () => {
+    const { placed, rotation, tetromino } = this.state;
+    const block = tetromino.rotations[rotation];
+    const position = { ...this.state.position };
+    position.row += 1;
+    for (let i = 0; i < block.length; i++) {
+      for (let j = 0; j < block[i].length; j++) {
+        if (block[i][j] === 0) continue;
+        if (i + position.row >= placed.length) {
+          return await this.placeBlock();
+        } else if (placed[i + position.row][j + position.col] !== 0) {
+          return await this.placeBlock();
+        }
+      }
+    }
+    await this.setState({ position });
   };
 
   /**
@@ -145,7 +191,12 @@ export default class App extends React.Component<*, State> {
    * @param {number} timestamp
    */
   update = async (timestamp) => {
-    window.requestAnimationFrame(this.update);
+    const { running, speed } = this.state;
+    if (timestamp - this.lastUpdate > speed) {
+      await this.fall();
+      this.lastUpdate = timestamp;
+    }
+    running && window.requestAnimationFrame(this.update);
   };
 
   /**
@@ -155,9 +206,14 @@ export default class App extends React.Component<*, State> {
     return (
       <div>
         <Field matrix={this.getMatrix()} />
-        <button onClick={this.initialize}>
-          {'initialize'}
-        </button>
+        <div>
+          <button onClick={this.start}>
+            {'start'}
+          </button>
+          <button onClick={this.stop}>
+            {'stop'}
+          </button>
+        </div>
       </div>
     );
   }

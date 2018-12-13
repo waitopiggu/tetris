@@ -15,9 +15,9 @@ export default [
         [0, 1, 0, 0],
       ],
     ],
-    spawn: {
-      x: 3,
-      y: 0,
+    position: {
+      col: 3,
+      row: 0,
     },
   },
   {
@@ -44,9 +44,9 @@ export default [
         [2, 2, 0],
       ],
     ],
-    spawn: {
-      x: 3,
-      y: 0,
+    position: {
+      col: 3,
+      row: 0,
     },
   },
   {
@@ -73,9 +73,9 @@ export default [
         [0, 3, 0],
       ],
     ],
-    spawn: {
-      x: 3,
-      y: 0,
+    position: {
+      col: 3,
+      row: 0,
     },
   },
   {
@@ -86,9 +86,9 @@ export default [
         [4, 4],
       ],
     ],
-    spawn: {
-      x: 4,
-      y: 0,
+    position: {
+      col: 4,
+      row: 0,
     },
   },
   {
@@ -115,9 +115,9 @@ export default [
         [0, 5, 0],
       ],
     ],
-    spawn: {
-      x: 3,
-      y: 0,
+    position: {
+      col: 3,
+      row: 0,
     },
   },
   {
@@ -144,9 +144,9 @@ export default [
         [0, 6, 0],
       ],
     ],
-    spawn: {
-      x: 3,
-      y: 0,
+    position: {
+      col: 3,
+      row: 0,
     },
   },
   {
@@ -173,9 +173,9 @@ export default [
         [7, 0, 0],
       ],
     ],
-    spawn: {
-      x: 3,
-      y: 0,
+    position: {
+      col: 3,
+      row: 0,
     },
   },
 ];

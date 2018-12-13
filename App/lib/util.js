@@ -14,8 +14,8 @@ export default {
     return nextIndex >= items.length ? 0 : nextIndex;
   },
   /**
-   * Random Index
+   * Random Item
    * @param {Array<any>} items
    */
-  randomIndex: items => Math.floor(Math.random() * items.length),
+  randomItem: items => items[Math.floor(Math.random() * items.length)],
 };

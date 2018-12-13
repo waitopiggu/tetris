@@ -1,6 +1,6 @@
 export default {
   colors: [
-    'dimgray',
+    'transparent',
     'cyan',
     'dodgerblue',
     'orange',
@@ -9,7 +9,8 @@ export default {
     'violet',
     'red',
   ],
-  initialSpeed: 1000,
+  inputDelayDivisor: 5,
+  initialSpeed: 100,
   field: {
     cols: 10,
     rows: 20,
