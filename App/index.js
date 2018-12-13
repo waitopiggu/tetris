@@ -81,11 +81,10 @@ export default class App extends React.Component<*, State> {
     if (tetromino) {
       const { position, rotation } = this.state;
       const block = tetromino.rotations[rotation];
-      const { col, row } = position;
       for (let i = 0; i < block.length; i++) {
         for (let j = 0; j < block[i].length; j++) {
           if (block[i][j] === 0) continue;
-          matrix[i + row][j + col] = block[i][j];
+          matrix[i + position.row][j + position.col] = block[i][j];
         }
       }
     }
@@ -187,11 +186,35 @@ export default class App extends React.Component<*, State> {
   };
 
   /**
+   * Move
+   */
+  move = async () => {
+    const { input, placed, rotation, tetromino } = this.state;
+    const block = tetromino.rotations[rotation];
+    let position = { ...this.state.position };
+    let moveX = input.left ? -1 : input.right ? 1 : 0;
+    for (let i = 0; i < block.length; i++) {
+      for (let j = 0; j < block[i].length; j++) {
+        if (block[i][j] === 0) continue;
+        const k = j + position.col + moveX;
+        if (k < 0 || k >= placed[i + position.row].length) {
+          moveX = 0;
+        } else if (placed[i + position.row][k] !== 0) {
+          moveX = 0;
+        }
+      }
+    }
+    position.col += moveX;
+    await this.setState({ position, rotation });
+  };
+
+  /**
    * Update
    * @param {number} timestamp
    */
   update = async (timestamp) => {
     const { running, speed } = this.state;
+    await this.move();
     if (timestamp - this.lastUpdate > speed) {
       await this.fall();
       this.lastUpdate = timestamp;
