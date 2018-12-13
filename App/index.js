@@ -6,6 +6,7 @@ import styles from './style';
 const fieldMatrix = Array(env.field.rows).fill(Array(env.field.cols).fill(0));
 
 type State = {
+  grounded: boolean,
   input: any,
   placed: Array<any>,
   position: any,
@@ -33,6 +34,7 @@ export default class App extends React.Component<*, State> {
    * Default State
    */
   state = {
+    grounded: false,
     input: {},
     placed: fieldMatrix,
     position: {},
@@ -130,6 +132,7 @@ export default class App extends React.Component<*, State> {
       }
     }
     await this.setState({
+      grounded: false,
       placed,
       position: { ...tetrominoNext.position },
       rotation: 0,
@@ -148,6 +151,7 @@ export default class App extends React.Component<*, State> {
     const { placed } = this.state;
     const { initialSpeed } = env;
     await this.setState({
+      grounded: false,
       placed: placed.map(row => row.map(col => 0)),
       position,
       rotation: 0,
@@ -171,17 +175,16 @@ export default class App extends React.Component<*, State> {
     const { placed, rotation, tetromino } = this.state;
     const block = tetromino.rotations[rotation];
     const position = { ...this.state.position };
-    position.row += 1;
     for (let i = 0; i < block.length; i++) {
+      const k = i + position.row + 1;
       for (let j = 0; j < block[i].length; j++) {
         if (block[i][j] === 0) continue;
-        if (i + position.row >= placed.length) {
-          return await this.placeBlock();
-        } else if (placed[i + position.row][j + position.col] !== 0) {
-          return await this.placeBlock();
+        if (k >= placed.length || placed[k][j + position.col] !== 0) {
+          return await this.setState({ grounded: true });
         }
       }
     }
+    position.row += 1;
     await this.setState({ position });
   };
 
@@ -191,7 +194,7 @@ export default class App extends React.Component<*, State> {
   move = async () => {
     const { input, placed, rotation, tetromino } = this.state;
     const block = tetromino.rotations[rotation];
-    let position = { ...this.state.position };
+    const position = { ...this.state.position };
     let moveX = input.left ? -1 : input.right ? 1 : 0;
     for (let i = 0; i < block.length; i++) {
       for (let j = 0; j < block[i].length; j++) {
@@ -218,6 +221,10 @@ export default class App extends React.Component<*, State> {
     if (timestamp - this.lastUpdate > speed) {
       await this.fall();
       this.lastUpdate = timestamp;
+    }
+    const { grounded } = this.state;
+    if (grounded) {
+      await this.placeBlock();
     }
     running && window.requestAnimationFrame(this.update);
   };
