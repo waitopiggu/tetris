@@ -55,8 +55,10 @@ export default class Game extends React.PureComponent<Props> {
 
   /**
    * Fall
+   * @param {number} timestamp
    */
-  fall = () => {
+  fall = (timestamp) => {
+    this.lastFall = timestamp;
     const { field, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
     const block = util.block(current, rotation);
@@ -81,16 +83,25 @@ export default class Game extends React.PureComponent<Props> {
 
   /**
    * Move
+   * @param {number} timestamp
    */
-  move = () => {
-    const { field, input, tetromino } = this.props;
+  move = (timestamp) => {
+    this.lastInput = timestamp;
+    const { input } = this.props;
+    if (input.moveDown) {
+      this.fall(timestamp);
+    }
+    const direction = input.moveLeft ? -1 : input.moveRight ? 1 : 0;
+    if (direction === 0) {
+      return;
+    }
+    const { field, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
     const block = util.block(current, rotation);
-    const dir = input.left ? -1 : input.right ? 1 : 0;
     for (let i = 0; i < block.length; i++) {
       const y = i + position.row;
       for (let j = 0; j < block[i].length; j++) {
-        const x = j + position.col + dir;
+        const x = j + position.col + direction;
         if (block[i][j] !== 0) {
           if (x < 0 || x >= field[y].length || field[y][x] !== 0) {
             return;
@@ -98,9 +109,42 @@ export default class Game extends React.PureComponent<Props> {
         }
       }
     }
-    position.col += dir;
+    position.col += direction;
     const { tetrominoUpdate } = this.props;
     tetrominoUpdate({ position });
+  };
+
+  /**
+   * Rotate
+   * @param {number} timestamp
+   */
+  rotate = (timestamp) => {
+    this.lastInput = timestamp;
+    const { input } = this.props;
+    if (!(input.rotateLeft || input.rotateRight)) {
+      return;
+    }
+    const { field, tetromino } = this.props;
+    const { current, position, rotation } = tetromino;
+    const newRotation = util.nextIndex(
+      current.rotations,
+      rotation,
+      input.rotateLeft,
+    );
+    const block = util.block(current, newRotation);
+    for (let i = 0; i < block.length; i++) {
+      const y = i + position.row;
+      for (let j = 0; j < block[i].length; j++) {
+        const x = j + position.col;
+        if (block[i][j] !== 0) {
+          if (x < 0 || x >= field[y].length || field[y][x] !== 0) {
+            return;
+          }
+        }
+      }
+    }
+    const { tetrominoUpdate } = this.props;
+    tetrominoUpdate({ rotation: newRotation });
   };
 
   /**
@@ -114,17 +158,16 @@ export default class Game extends React.PureComponent<Props> {
       this.inputLock = false;
     }
     if (move && !this.inputLock) {
-      this.move();
+      this.move(timestamp);
+      this.rotate(timestamp);
       this.inputLock = true;
-      this.lastInput = timestamp;
     }
     const { game } = this.props;
     if (timestamp - this.lastInput > game.speed / env.inputDelayDivisor) {
       this.inputLock = false;
     }
     if (timestamp - this.lastFall > game.speed) {
-      this.fall();
-      this.lastFall = timestamp;
+      this.fall(timestamp);
     }
     if (game.running) {
       window.requestAnimationFrame(this.update);

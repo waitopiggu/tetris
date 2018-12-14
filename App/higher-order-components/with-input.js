@@ -51,15 +51,23 @@ export default function (WrappedComponent) {
     handleInput = (value, fn) => (event) => {
       switch (event.key) {
         case 'ArrowLeft': {
-          fn('left');
+          fn('moveLeft');
           break;
         }
         case 'ArrowRight': {
-          fn('right');
+          fn('moveRight');
           break;
         }
-        case 'ArrowUp': {
-          fn('up');
+        case 'ArrowDown': {
+          fn('moveDown');
+          break;
+        }
+        case 'x': {
+          fn('rotateRight');
+          break;
+        }
+        case 'z': {
+          fn('rotateLeft');
           break;
         }
         default: {
