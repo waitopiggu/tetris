@@ -1,5 +1,5 @@
 import React from 'react';
-import { env } from '../../lib';
+import { env, util } from '../../lib';
 import styles from './styles';
 
 const { colors } = env;
@@ -17,7 +17,7 @@ export default ({ field, tetromino }: Props) => {
   const matrix = field.map(row => row.map(col => col));
   if (tetromino.current) {
     const { current, position, rotation } = tetromino;
-    const block = current.rotations[rotation];
+    const block = util.block(current, rotation);
     for (let i = 0; i < block.length; i++) {
       for (let j = 0; j < block[i].length; j++) {
         if (block[i][j] !== 0) {

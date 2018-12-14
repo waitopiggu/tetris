@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from '..';
-import { env } from '../../lib';
+import { env, util } from '../../lib';
 import './style';
 
 type Props = {
@@ -59,7 +59,7 @@ export default class Game extends React.PureComponent<Props> {
   fall = () => {
     const { field, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
-    const block = current.rotations[rotation];
+    const block = util.block(current, rotation);
     for (let i = 0; i < block.length; i++) {
       const y = i + position.row + 1;
       for (let j = 0; j < block[i].length; j++) {
@@ -85,7 +85,7 @@ export default class Game extends React.PureComponent<Props> {
   move = () => {
     const { field, input, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
-    const block = current.rotations[rotation];
+    const block = util.block(current, rotation);
     const dir = input.left ? -1 : input.right ? 1 : 0;
     for (let i = 0; i < block.length; i++) {
       const y = i + position.row;

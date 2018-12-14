@@ -1,5 +1,13 @@
 export default {
   /**
+   * Get Tetromino Block
+   * @param {any} tetromino
+   * @param {number} rotation
+   */
+  block: (tetromino, rotation) => (
+    tetromino.rotations[rotation]
+  ),
+  /**
    * Next Index
    * @param {Array<any>} items
    * @param {number} currentIndex
