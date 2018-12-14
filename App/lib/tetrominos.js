@@ -29,7 +29,7 @@ export default [
     ],
     position: {
       col: 3,
-      row: 0,
+      row: 3,
     },
   },
   {
@@ -58,7 +58,7 @@ export default [
     ],
     position: {
       col: 3,
-      row: 0,
+      row: 3,
     },
   },
   {
@@ -87,7 +87,7 @@ export default [
     ],
     position: {
       col: 3,
-      row: 0,
+      row: 3,
     },
   },
   {
@@ -100,7 +100,7 @@ export default [
     ],
     position: {
       col: 4,
-      row: 0,
+      row: 3,
     },
   },
   {
@@ -129,7 +129,7 @@ export default [
     ],
     position: {
       col: 3,
-      row: 0,
+      row: 3,
     },
   },
   {
@@ -158,7 +158,7 @@ export default [
     ],
     position: {
       col: 3,
-      row: 0,
+      row: 3,
     },
   },
   {
@@ -187,7 +187,7 @@ export default [
     ],
     position: {
       col: 3,
-      row: 0,
+      row: 3,
     },
   },
 ];

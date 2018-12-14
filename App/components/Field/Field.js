@@ -29,15 +29,20 @@ export default ({ field, tetromino }: Props) => {
   return (
     <table className={styles.table}>
       <tbody>
-        {matrix.map((row, i) => (
-          <tr key={i.toString()}>
-            {row.map((col, j) => (
-              <td key={j.toString()} style={{ color: colors[col] }}>
-                {'[]'}
-              </td>
-            ))}
-          </tr>
-        ))}
+        {matrix.map((row, i) => {
+          if (i > env.field.rowsOffset) {
+            return (
+              <tr key={i.toString()}>
+                {row.map((col, j) => (
+                  <td key={j.toString()} style={{ color: colors[col] }}>
+                    {'[]'}
+                  </td>
+                ))}
+              </tr>
+            );
+          }
+          return null;
+        })}
       </tbody>
     </table>
   );
