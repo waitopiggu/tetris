@@ -108,11 +108,17 @@ export default class Game extends React.PureComponent<Props> {
    * @param {number} timestamp
    */
   update = (timestamp) => {
-    const { game } = this.props;
-    if (!this.inputLock) {
+    const { input } = this.props;
+    const move = Object.values(input).reduce((value, i) => (value || i), false);
+    if (this.inputLock && !move) {
+      this.inputLock = false;
+    }
+    if (move && !this.inputLock) {
       this.move();
+      this.inputLock = true;
       this.lastInput = timestamp;
     }
+    const { game } = this.props;
     if (timestamp - this.lastInput > game.speed / env.inputDelayDivisor) {
       this.inputLock = false;
     }
