@@ -10,7 +10,7 @@ export default {
     'red',
   ],
   inputDelayDivisor: 20,
-  initialSpeed: 1000,
+  initialSpeed: 100,
   field: {
     cols: 10,
     rows: 20,

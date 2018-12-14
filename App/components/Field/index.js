@@ -1,29 +1,9 @@
-import React from 'react';
-import { env } from '../../lib';
-import styles from './styles';
+import { connect } from 'react-redux';
+import Field from './Field';
 
-const { colors, field } = env;
+const mapStateToProps = state => ({
+  field: state.field,
+  tetromino: state.tetromino,
+});
 
-type Props = {
-  matrix: Array<[]>,
-};
-
-/**
- * Field Component
- * @param {Props} props
- */
-export default ({ matrix }: Props) => (
-  <table className={styles.table}>
-    <tbody>
-      {matrix.map((row, i) => (
-        <tr key={i.toString()}>
-          {row.map((col, j) => (
-            <td key={j.toString()} style={{ color: colors[col] }}>
-              {'[]'}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-);
+export default connect(mapStateToProps)(Field);
