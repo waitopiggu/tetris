@@ -1,6 +1,6 @@
 import React from 'react';
-import { Field } from '../../components';
-import { env, tetrominos, util } from '../../lib';
+import { Field } from '..';
+import { env } from '../../lib';
 import './style';
 
 type Props = {
@@ -76,7 +76,7 @@ export default class Game extends React.PureComponent<Props> {
     }
     position.row += 1;
     const { tetrominoUpdate } = this.props;
-    tetrominoUpdate({ position })
+    tetrominoUpdate({ position });
   };
 
   /**
@@ -86,7 +86,7 @@ export default class Game extends React.PureComponent<Props> {
     const { field, input, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
     const block = current.rotations[rotation];
-    let dir = input.left ? -1 : input.right ? 1 : 0;
+    const dir = input.left ? -1 : input.right ? 1 : 0;
     for (let i = 0; i < block.length; i++) {
       const y = i + position.row;
       for (let j = 0; j < block[i].length; j++) {
@@ -95,7 +95,7 @@ export default class Game extends React.PureComponent<Props> {
           if (x < 0 || x >= field[y].length || field[y][x] !== 0) {
             return;
           }
-        } 
+        }
       }
     }
     position.col += dir;
@@ -133,10 +133,10 @@ export default class Game extends React.PureComponent<Props> {
       <div>
         <Field />
         <div>
-          <button onClick={this.start}>
+          <button onClick={this.start} type="button">
             {'start'}
           </button>
-          <button onClick={this.stop}>
+          <button onClick={this.stop} type="button">
             {'stop'}
           </button>
         </div>

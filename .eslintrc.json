@@ -10,8 +10,11 @@
     "react"
   ],
   "rules": {
+    "object-curly-newline": 0,
+    "no-nested-ternary": 0,
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/sort-comp": 0
   },
   "settings": {
     "import/resolver": {

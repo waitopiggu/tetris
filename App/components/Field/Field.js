@@ -41,4 +41,4 @@ export default ({ field, tetromino }: Props) => {
       </tbody>
     </table>
   );
-}
+};

@@ -1,8 +1,9 @@
+/* eslint no-underscore-dangle: 0 */
 import React from 'react';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { field, game, input, tetromino } from './state';
 import { Game } from './components';
+import { field, game, input, tetromino } from './state';
 
 const store = createStore(
   combineReducers({
