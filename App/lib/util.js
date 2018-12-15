@@ -1,5 +1,13 @@
 export default {
   /**
+   * Any
+   * @param {boolean} previousValue
+   * @param {boolean} currentValue
+   */
+  any: (previousValue, currentValue) => (
+    previousValue || currentValue
+  ),
+  /**
    * Get Tetromino Block
    * @param {any} tetromino
    * @param {number} rotation
