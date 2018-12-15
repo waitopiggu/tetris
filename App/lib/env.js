@@ -9,8 +9,12 @@ export default {
     'violet',
     'red',
   ],
-  inputDelayDivisor: 5,
-  initialSpeed: 500,
+  delay: {
+    drop: 1,
+    move: 5,
+    rotate: 2,
+  },
+  initialSpeed: 1000,
   field: {
     cols: 10,
     rows: 24,

@@ -3,6 +3,18 @@ import { Field } from '..';
 import { env, util } from '../../lib';
 import './style';
 
+const inputLockInitialState = {
+  drop: false,
+  move: false,
+  rotate: false,
+};
+
+const lastUpdateInitialState = {
+  drop: 0,
+  move: 0,
+  rotate: 0,
+};
+
 type Props = {
   field: Array<[]>,
   fieldPlaceBlock: Function,
@@ -22,17 +34,12 @@ export default class Game extends React.PureComponent<Props> {
   /**
    * Input Lock
    */
-  inputLock: false;
+  inputLock = { ...inputLockInitialState };
 
   /**
-   * Last Input
+   * Last Update
    */
-  lastInput: 0;
-
-  /**
-   * Last Fall
-   */
-  lastFall: 0;
+  lastUpdate = { ...lastUpdateInitialState };
 
   /**
    * Start
@@ -40,8 +47,8 @@ export default class Game extends React.PureComponent<Props> {
   start = () => {
     const { gameStart } = this.props;
     gameStart();
-    this.lastInput = 0;
-    this.lastFall = 0;
+    this.inputLock = { ...inputLockInitialState };
+    this.lastUpdate = { ...lastUpdateInitialState };
     window.requestAnimationFrame(this.update);
   };
 
@@ -54,11 +61,9 @@ export default class Game extends React.PureComponent<Props> {
   };
 
   /**
-   * Fall
-   * @param {number} timestamp
+   * Drop
    */
-  fall = (timestamp) => {
-    this.lastFall = timestamp;
+  drop = () => {
     const { field, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
     const block = util.block(current, rotation);
@@ -83,14 +88,9 @@ export default class Game extends React.PureComponent<Props> {
 
   /**
    * Move
-   * @param {number} timestamp
    */
-  move = (timestamp) => {
-    this.lastInput = timestamp;
+  move = () => {
     const { input } = this.props;
-    if (input.moveDown) {
-      this.fall(timestamp);
-    }
     const direction = input.moveLeft ? -1 : input.moveRight ? 1 : 0;
     if (direction === 0) {
       return;
@@ -116,14 +116,9 @@ export default class Game extends React.PureComponent<Props> {
 
   /**
    * Rotate
-   * @param {number} timestamp
    */
-  rotate = (timestamp) => {
-    this.lastInput = timestamp;
+  rotate = () => {
     const { input } = this.props;
-    if (!(input.rotateLeft || input.rotateRight)) {
-      return;
-    }
     const { field, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
     const newRotation = util.nextIndex(
@@ -153,21 +148,37 @@ export default class Game extends React.PureComponent<Props> {
    */
   update = (timestamp) => {
     const { input } = this.props;
-    const move = Object.values(input).reduce((value, i) => (value || i), false);
-    if (this.inputLock && !move) {
-      this.inputLock = false;
+    const { moveDown, moveLeft, moveRight } = input;
+    const move = moveDown || moveLeft || moveRight;
+    if (move && !this.inputLock.move) {
+      if (input.moveDown) {
+        this.drop();
+        this.inputLock.drop = true;
+        this.lastUpdate.drop = timestamp;
+      } else {
+        this.move();
+      }
+      this.inputLock.move = true;
+      this.lastUpdate.move = timestamp;
     }
-    if (move && !this.inputLock) {
-      this.move(timestamp);
-      this.rotate(timestamp);
-      this.inputLock = true;
+    const { rotateLeft, rotateRight } = input;
+    const rotate = rotateLeft || rotateRight;
+    if (rotate && !this.inputLock.rotate) {
+      this.rotate();
+      this.inputLock.rotate = true;
+      this.lastUpdate.rotate = timestamp;
     }
     const { game } = this.props;
-    if (timestamp - this.lastInput > game.speed / env.inputDelayDivisor) {
-      this.inputLock = false;
+    if (timestamp - this.lastUpdate.move > game.speed / env.delay.move) {
+      this.inputLock.move = false;
     }
-    if (timestamp - this.lastFall > game.speed) {
-      this.fall(timestamp);
+    if (timestamp - this.lastUpdate.rotate > game.speed / env.delay.rotate) {
+      this.inputLock.rotate = false;
+    }
+    if (timestamp - this.lastUpdate.drop > game.speed / env.delay.drop) {
+      this.drop();
+      this.inputLock.move = false;
+      this.lastUpdate.drop = timestamp;
     }
     if (game.running) {
       window.requestAnimationFrame(this.update);
