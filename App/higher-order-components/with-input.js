@@ -62,6 +62,7 @@ export default function (WrappedComponent) {
           fn('moveDown');
           break;
         }
+        case 'ArrowUp':
         case 'x': {
           fn('rotateRight');
           break;
