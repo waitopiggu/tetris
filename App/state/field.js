@@ -4,6 +4,7 @@ import { game } from '.';
 export const actionTypes = {
   FIELD_INIT: 'FIELD_INIT',
   FIELD_PLACE_BLOCK: 'FIELD_PLACE_BLOCK',
+  FIELD_SET: 'FIELD_SET',
 };
 
 export const actions = {
@@ -13,6 +14,10 @@ export const actions = {
   placeBlock: (block, position) => ({
     type: actionTypes.FIELD_PLACE_BLOCK,
     payload: { block, position },
+  }),
+  set: field => ({
+    type: actionTypes.FIELD_SET,
+    payload: { field },
   }),
 };
 
@@ -32,6 +37,10 @@ export function reducer(state = initialState, action) {
           field[i + position.row][j + position.col] = col;
         }
       }));
+      return field;
+    }
+    case actionTypes.FIELD_SET: {
+      const { field } = action.payload;
       return field;
     }
     default: {

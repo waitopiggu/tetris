@@ -1,5 +1,7 @@
 import { connect } from 'react-redux';
-import { field, game, tetromino } from '../../state';
+import { actions as fieldActions } from '../../state/field';
+import { actions as gameActions } from '../../state/game';
+import { actions as tetrominoActions } from '../../state/tetromino';
 import { withInput } from '../../higher-order-components';
 import Game from './Game';
 
@@ -11,11 +13,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  fieldPlaceBlock: (block, position) => dispatch(field.actions.placeBlock(block, position)),
-  gameStart: () => dispatch(game.actions.start()),
-  gameStop: () => dispatch(game.actions.stop()),
-  tetrominoNext: () => dispatch(tetromino.actions.next()),
-  tetrominoUpdate: props => dispatch(tetromino.actions.update(props)),
+  fieldPlaceBlock: (block, position) => dispatch(
+    fieldActions.placeBlock(block, position),
+  ),
+  fieldSet: field => dispatch(fieldActions.set(field)),
+  gameStart: () => dispatch(gameActions.start()),
+  gameStop: () => dispatch(gameActions.stop()),
+  tetrominoNext: () => dispatch(tetrominoActions.next()),
+  tetrominoUpdate: props => dispatch(tetrominoActions.update(props)),
 });
 
 export default withInput(connect(mapStateToProps, mapDispatchToProps)(Game));

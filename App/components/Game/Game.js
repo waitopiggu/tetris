@@ -18,6 +18,7 @@ const lastUpdateInitialState = {
 type Props = {
   field: Array<[]>,
   fieldPlaceBlock: Function,
+  fieldSet: Function,
   game: any,
   gameStart: Function,
   gameStop: Function,
@@ -61,6 +62,27 @@ export default class Game extends React.PureComponent<Props> {
   };
 
   /**
+   * Clear Rows
+   */
+  clearRows = () => {
+    const { field } = this.props;
+    let clear = false;
+    for (let i = 0; i < field.length; i++) {
+      if (field[i].reduce((p, c) => p && c, true)) {
+        clear = true;
+        field[i].map(() => 0);
+        for (let j = i; j > 0; j--) {
+          field[j] = field[j - 1];
+        }
+      }
+    }
+    if (clear) {
+      const { fieldSet } = this.props;
+      fieldSet(field);
+    }
+  };
+
+  /**
    * Drop
    */
   drop = () => {
@@ -73,9 +95,8 @@ export default class Game extends React.PureComponent<Props> {
         if (block[i][j] !== 0) {
           const x = j + position.col;
           if (y >= field.length || field[y][x] !== 0) {
-            const { fieldPlaceBlock, tetrominoNext } = this.props;
+            const { fieldPlaceBlock } = this.props;
             fieldPlaceBlock(block, position);
-            tetrominoNext();
             return;
           }
         }
@@ -155,9 +176,8 @@ export default class Game extends React.PureComponent<Props> {
         this.drop();
         this.inputLock.drop = true;
         this.lastUpdate.drop = timestamp;
-      } else {
-        this.move();
       }
+      this.move();
       this.inputLock.move = true;
       this.lastUpdate.move = timestamp;
     }
@@ -177,8 +197,14 @@ export default class Game extends React.PureComponent<Props> {
     }
     if (timestamp - this.lastUpdate.drop > game.speed / env.delay.drop) {
       this.drop();
-      this.inputLock.move = false;
+      this.inputLock.drop = false;
       this.lastUpdate.drop = timestamp;
+    }
+    this.clearRows();
+    const { tetromino } = this.props;
+    if (tetromino.landed) {
+      const { tetrominoNext } = this.props;
+      tetrominoNext();
     }
     if (game.running) {
       window.requestAnimationFrame(this.update);

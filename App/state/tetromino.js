@@ -1,5 +1,5 @@
 import { tetrominos, util } from '../lib';
-import { game } from '.';
+import { field, game } from '.';
 
 export const actionTypes = {
   TETROMINO_INIT: 'TETROMINO_INIT',
@@ -22,6 +22,7 @@ export const actions = {
 
 const initialState = {
   current: null,
+  landed: false,
   next: null,
   position: {},
   rotation: 0,
@@ -34,6 +35,7 @@ export function reducer(state = initialState, action) {
       const current = util.randomItem(tetrominos);
       return {
         current,
+        landed: false,
         next: util.randomItem(tetrominos),
         position: { ...current.position },
         rotation: 0,
@@ -43,6 +45,7 @@ export function reducer(state = initialState, action) {
       const { next } = state;
       return {
         current: next,
+        landed: false,
         next: util.randomItem(tetrominos),
         position: { ...next.position },
         rotation: 0,
@@ -51,6 +54,9 @@ export function reducer(state = initialState, action) {
     case actionTypes.TETROMINO_UPDATE: {
       const { props } = action.payload;
       return { ...state, ...props };
+    }
+    case field.actionTypes.FIELD_PLACE_BLOCK: {
+      return { ...state, landed: true };
     }
     default: {
       return state;
