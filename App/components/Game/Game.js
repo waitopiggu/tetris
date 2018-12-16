@@ -111,12 +111,8 @@ export default class Game extends React.PureComponent<Props> {
    * Move
    */
   move = () => {
-    const { input } = this.props;
+    const { field, input, tetromino } = this.props;
     const direction = input.moveLeft ? -1 : input.moveRight ? 1 : 0;
-    if (direction === 0) {
-      return;
-    }
-    const { field, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
     const block = util.block(current, rotation);
     for (let i = 0; i < block.length; i++) {
@@ -139,8 +135,7 @@ export default class Game extends React.PureComponent<Props> {
    * Rotate
    */
   rotate = () => {
-    const { input } = this.props;
-    const { field, tetromino } = this.props;
+    const { field, input, tetromino } = this.props;
     const { current, position, rotation } = tetromino;
     const newRotation = util.nextIndex(
       current.rotations,
@@ -169,21 +164,20 @@ export default class Game extends React.PureComponent<Props> {
    */
   update = (timestamp) => {
     const { input } = this.props;
-    const { moveDown, moveLeft, moveRight } = input;
-    const move = moveDown || moveLeft || moveRight;
-    if (move && !this.inputLock.move) {
+    const move = input.moveDown || input.moveLeft || input.moveRight;
+    if (!this.inputLock.move && move) {
       if (input.moveDown) {
         this.drop();
         this.inputLock.drop = true;
         this.lastUpdate.drop = timestamp;
       }
-      this.move();
+      if (input.moveLeft || input.moveRight) {
+        this.move();
+      }
       this.inputLock.move = true;
       this.lastUpdate.move = timestamp;
     }
-    const { rotateLeft, rotateRight } = input;
-    const rotate = rotateLeft || rotateRight;
-    if (rotate && !this.inputLock.rotate) {
+    if (!this.inputLock.rotate && (input.rotateLeft || input.rotateRight)) {
       this.rotate();
       this.inputLock.rotate = true;
       this.lastUpdate.rotate = timestamp;
@@ -200,9 +194,9 @@ export default class Game extends React.PureComponent<Props> {
       this.inputLock.drop = false;
       this.lastUpdate.drop = timestamp;
     }
-    this.clearRows();
     const { tetromino } = this.props;
     if (tetromino.landed) {
+      this.clearRows();
       const { tetrominoNext } = this.props;
       tetrominoNext();
     }
