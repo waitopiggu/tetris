@@ -32,11 +32,13 @@ export function reducer(state = initialState, action) {
     case actionTypes.FIELD_PLACE_BLOCK: {
       const { block, position } = action.payload;
       const field = state.map(row => row.map(col => col));
-      block.forEach((row, i) => row.forEach((col, j) => {
-        if (col !== 0) {
-          field[i + position.row][j + position.col] = col;
+      for (let i = 0; i < block.length; i++) {
+        for (let j = 0; j < block[i].length; j++) {
+          if (block[i][j] !== 0) {
+            field[i + position.row][j + position.col] = block[i][j];
+          }
         }
-      }));
+      }
       return field;
     }
     case actionTypes.FIELD_SET: {
