@@ -17,7 +17,7 @@ const mapDispatchToProps = dispatch => ({
     fieldActions.placeBlock(block, position),
   ),
   fieldSet: field => dispatch(fieldActions.set(field)),
-  gameStart: () => dispatch(gameActions.start()),
+  gameStart: level => dispatch(gameActions.start(level)),
   gameStop: () => dispatch(gameActions.stop()),
   tetrominoNext: () => dispatch(tetrominoActions.next()),
   tetrominoUpdate: props => dispatch(tetrominoActions.update(props)),

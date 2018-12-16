@@ -6,7 +6,8 @@ export const actionTypes = {
 };
 
 export const actions = {
-  start: () => ({
+  start: level => ({
+    payload: { level },
     type: actionTypes.GAME_START,
   }),
   stop: () => ({
@@ -16,13 +17,18 @@ export const actions = {
 
 const initialState = {
   running: false,
-  speed: env.initialSpeed,
+  speed: env.speed[0],
 };
 
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.GAME_START: {
-      return { ...initialState, running: true };
+      const { level } = action.payload;
+      return {
+        ...initialState,
+        running: true,
+        speed: env.speed[level || 0],
+      };
     }
     case actionTypes.GAME_STOP: {
       return { ...state, running: false };
