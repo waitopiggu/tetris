@@ -1,6 +1,6 @@
 import React from 'react';
-import { Field } from '..';
-import { env, util } from '../../lib';
+import { Field } from './components';
+import { env, util } from '../lib';
 import './style';
 
 const inputLockInitialState = {

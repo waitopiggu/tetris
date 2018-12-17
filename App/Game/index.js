@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
-import { actions as fieldActions } from '../../state/field';
-import { actions as gameActions } from '../../state/game';
-import { actions as tetrominoActions } from '../../state/tetromino';
-import { withInput } from '../../higher-order-components';
+import { actions as fieldActions } from '../state/field';
+import { actions as gameActions } from '../state/game';
+import { actions as tetrominoActions } from '../state/tetromino';
+import { withInput } from '../higher-order-components';
 import Game from './Game';
 
 const mapStateToProps = state => ({

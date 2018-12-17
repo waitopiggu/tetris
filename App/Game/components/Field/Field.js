@@ -1,5 +1,5 @@
 import React from 'react';
-import { env, util } from '../../lib';
+import { env, util } from '../../../lib';
 import styles from './styles';
 
 const { colors } = env;

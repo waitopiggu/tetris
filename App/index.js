@@ -2,7 +2,7 @@
 import React from 'react';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { Game } from './components';
+import Game from './Game';
 import { field, game, input, tetromino } from './state';
 
 const store = createStore(
