@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { input } from '../state';
+import { input } from '../../state';
 
 type Props = {
   keyDown: Function,
