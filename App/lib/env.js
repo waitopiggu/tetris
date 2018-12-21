@@ -1,5 +1,6 @@
 export default {
-  autoRepeatRate: 30,
+  autoRepeatRate: 3,
+  autoShiftDelay: 10,
   colors: [
     'transparent',
     'cyan',
@@ -10,12 +11,6 @@ export default {
     'violet',
     'red',
   ],
-  delayedAutoShift: 150,
-  delay: {
-    drop: 1,
-    move: 5,
-    rotate: 2,
-  },
   field: {
     cols: 10,
     rows: 24,

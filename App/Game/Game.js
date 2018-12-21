@@ -21,6 +21,7 @@ type Props = {
   game: any,
   gameStart: Function,
   gameStop: Function,
+  gameUpdateScore: Function,
   input: any,
   tetromino: any,
   tetrominoNext: Function,
@@ -65,18 +66,19 @@ export default class Game extends React.PureComponent<Props> {
    */
   clearRows = () => {
     const { field } = this.props;
-    let clear = false;
+    const lines = [];
     for (let i = 0; i < field.length; i++) {
       if (field[i].reduce((p, c) => p && c, true)) {
-        clear = true;
+        lines.push(i);
         field[i].map(() => 0);
         for (let j = i; j > 0; j--) {
           field[j] = field[j - 1];
         }
       }
     }
-    if (clear) {
-      const { fieldSet } = this.props;
+    if (lines.length > 0) {
+      const { gameUpdateScore, fieldSet } = this.props;
+      gameUpdateScore(lines);
       fieldSet(field);
     }
   };
@@ -162,7 +164,7 @@ export default class Game extends React.PureComponent<Props> {
    * @param {number} timestamp
    */
   update = (timestamp) => {
-    const { game, input } = this.props;
+    const { game, input, tetromino } = this.props;
     const levelSpeed = util.speed(game.level, env.speeds);
     /**
      * Move
@@ -180,7 +182,7 @@ export default class Game extends React.PureComponent<Props> {
       this.inputLock.move = true;
       this.lastUpdate.move = timestamp;
     }
-    if (timestamp - this.lastUpdate.move > levelSpeed / env.delay.move) {
+    if (timestamp - this.lastUpdate.move > levelSpeed / env.autoShiftDelay) {
       this.inputLock.move = false;
     }
     /**
@@ -204,7 +206,6 @@ export default class Game extends React.PureComponent<Props> {
     /**
      * Clear Rows
      */
-    const { tetromino } = this.props;
     if (tetromino.landed) {
       this.clearRows();
       const { tetrominoNext } = this.props;
@@ -222,9 +223,11 @@ export default class Game extends React.PureComponent<Props> {
    * Render
    */
   render() {
+    const { game } = this.props;
     return (
       <div>
         <Field />
+        <span style={{ color: 'white' }}>{`score: ${game.score}`}</span>
         <div>
           <button onClick={this.start} type="button">
             {'start'}
