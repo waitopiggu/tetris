@@ -34,21 +34,19 @@ export function reducer(state = initialState, action) {
     case game.actionTypes.GAME_START: {
       const current = util.randomItem(tetrominos);
       return {
+        ...initialState,
         current,
-        landed: false,
         next: util.randomItem(tetrominos),
         position: { ...current.position },
-        rotation: 0,
       };
     }
     case actionTypes.TETROMINO_NEXT: {
       const { next } = state;
       return {
+        ...initialState,
         current: next,
-        landed: false,
         next: util.randomItem(tetrominos),
         position: { ...next.position },
-        rotation: 0,
       };
     }
     case actionTypes.TETROMINO_UPDATE: {

@@ -1,5 +1,3 @@
-import { env } from '../lib';
-
 export const actionTypes = {
   GAME_START: 'GAME_START',
   GAME_STOP: 'GAME_STOP',
@@ -16,8 +14,8 @@ export const actions = {
 };
 
 const initialState = {
+  level: 0,
   running: false,
-  speed: env.speed[0],
 };
 
 export function reducer(state = initialState, action) {
@@ -25,9 +23,8 @@ export function reducer(state = initialState, action) {
     case actionTypes.GAME_START: {
       const { level } = action.payload;
       return {
-        ...initialState,
+        level: level || 0,
         running: true,
-        speed: env.speed[level || 0],
       };
     }
     case actionTypes.GAME_STOP: {

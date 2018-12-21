@@ -26,4 +26,11 @@ export default {
    * @param {Array<any>} items
    */
   randomItem: items => items[Math.floor(Math.random() * items.length)],
+
+  /**
+   * Game Speed
+   * @param {number} level
+   * @param {Array<number>} speeds
+   */
+  speed: (level, speeds) => speeds[Math.min(level, speeds.length - 1)],
 };
