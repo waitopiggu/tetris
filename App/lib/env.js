@@ -16,7 +16,7 @@ export default {
     rows: 24,
     rowsOffset: 4,
   },
-  speeds: [
+  levels: [
     1000.0,
     793.0,
     617.80,

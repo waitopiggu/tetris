@@ -30,7 +30,9 @@ export default {
   /**
    * Game Speed
    * @param {number} level
-   * @param {Array<number>} speeds
+   * @param {Array<number>} levelSpeeds
    */
-  speed: (level, speeds) => speeds[Math.min(level, speeds.length - 1)],
+  speed: (level, levelSpeeds) => levelSpeeds[
+    Math.min(level, levelSpeeds.length - 1)
+  ],
 };

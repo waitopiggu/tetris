@@ -165,7 +165,7 @@ export default class Game extends React.PureComponent<Props> {
    */
   update = (timestamp) => {
     const { game, input, tetromino } = this.props;
-    const levelSpeed = util.speed(game.level, env.speeds);
+    const levelSpeed = util.speed(game.level, env.levels);
     /**
      * Move
      */
@@ -227,7 +227,9 @@ export default class Game extends React.PureComponent<Props> {
     return (
       <div>
         <Field />
-        <span style={{ color: 'white' }}>{`score: ${game.score}`}</span>
+        <span style={{ color: 'white' }}>
+          {`level: ${game.level} score: ${game.score}`}
+        </span>
         <div>
           <button onClick={this.start} type="button">
             {'start'}

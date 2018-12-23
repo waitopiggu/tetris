@@ -1,3 +1,5 @@
+import { env } from '../lib';
+
 export const actionTypes = {
   GAME_START: 'GAME_START',
   GAME_STOP: 'GAME_STOP',
@@ -20,6 +22,7 @@ export const actions = {
 
 const initialState = {
   level: 0,
+  lines: 0,
   running: false,
   score: 0,
 };
@@ -43,17 +46,22 @@ export function reducer(state = initialState, action) {
       let { score } = state;
       if (lines.length === 1) {
         score += n * 40;
-      }
-      if (lines.length === 2) {
+      } else if (lines.length === 2) {
         score += n * 100;
-      }
-      if (lines.length === 3) {
+      } else if (lines.length === 3) {
         score += n * 300;
-      }
-      if (lines.length === 4) {
+      } else if (lines.length === 4) {
         score += n * 1200;
       }
-      return { ...state, score };
+      return {
+        ...state,
+        level: Math.min(
+          Math.floor((state.lines + lines.length) / 10),
+          env.levels.length - 1,
+        ),
+        lines: state.lines + lines.length,
+        score,
+      };
     }
     default: {
       return state;
